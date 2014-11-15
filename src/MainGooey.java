@@ -134,7 +134,9 @@ public class MainGooey extends JFrame implements ActionListener {
 		//parse file to ArrayList
 		try {
 			//read offcampus
-		    reader = new BufferedReader(new FileReader(filePath + "/src/resources/offcampus"));
+			//String somePath = getClass().getResourceAsStream("resources/offcampus").getPath();
+			//System.out.println("PATHHHH" + somePath);
+		    reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("resources/offcampus")));
 		    String text = null;
 
 		    while ((text = reader.readLine()) != null) {
@@ -143,8 +145,12 @@ public class MainGooey extends JFrame implements ActionListener {
 		    }
 		    
 		    //read oncampus
-		    reader = new BufferedReader(new FileReader(filePath + "/src/resources/oncampus"));
-
+		    //reader = new BufferedReader(new FileReader(filePath + "/src/resources/oncampus"));
+		    //somePath = MainGooey.class.getResource("resources/oncampus").getFile();
+			//System.out.println(somePath);
+		    //reader = new BufferedReader(new FileReader(somePath));
+		    reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("resources/oncampus")));
+		    
 		    while ((text = reader.readLine()) != null) {
 		    	onFoodPlaces.add(text);
 		    }
@@ -168,6 +174,9 @@ public class MainGooey extends JFrame implements ActionListener {
 		//return random foodPlace from arrayList
 		if(offBox.isSelected()) {
 			foodPlaces.addAll(offFoodPlaces);
+		}
+		else {
+			offFoodMap = new HashMap<String, String>();
 		}
 		if(onBox.isSelected()) {
 			foodPlaces.addAll(onFoodPlaces);

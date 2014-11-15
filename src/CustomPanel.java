@@ -22,6 +22,7 @@ public class CustomPanel extends JPanel implements ActionListener{
 	DefaultListModel listModel = new DefaultListModel();
 	JTextField inputField;
 	JButton inputButton;
+	JButton clearButton;
 	
 	public CustomPanel() {
 		super(new BorderLayout());
@@ -35,13 +36,19 @@ public class CustomPanel extends JPanel implements ActionListener{
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
 		/**********************************************/
-		JPanel inputPanel = new JPanel(new GridLayout(0,2));
+		JPanel inputPanel = new JPanel(new GridLayout(0,3));
 		inputField = new JTextField();
 		inputButton = new JButton("Add");
+		inputButton.setActionCommand("add");
 		inputButton.addActionListener(this);
+		
+		clearButton = new JButton("Clear");
+		clearButton.setActionCommand("clear");
+		clearButton.addActionListener(this);
 		
 		inputPanel.add(inputField);
 		inputPanel.add(inputButton);
+		inputPanel.add(clearButton);
 		
 		this.add(listScroller, BorderLayout.NORTH);
 		this.add(inputPanel, BorderLayout.SOUTH);
@@ -49,16 +56,22 @@ public class CustomPanel extends JPanel implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("add")) {
 		listModel.addElement(inputField.getText());
 		customList.setModel(listModel);
 		inputField.setText("");
+		}
+		else if(e.getActionCommand().equals("clear")) {
+			listModel.clear();
+			customList.setModel(listModel);
+		}
 	}
 	
 	public ArrayList<String> exportList() {
 		ArrayList<String> returnList = new ArrayList<String>();
 		for(int i=0; i < listModel.getSize(); i++) {
 			returnList.add((String) listModel.get(i));
-			System.out.println((String) listModel.get(i));
+			//System.out.println((String) listModel.get(i));
 		}
 		return returnList;
 	}

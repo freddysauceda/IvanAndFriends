@@ -39,6 +39,8 @@ public class CustomPanel extends JPanel implements ActionListener{
 		/**********************************************/
 		JPanel inputPanel = new JPanel(new GridLayout(2,0));
 		inputField = new JTextField();
+		inputField.addActionListener(this);
+		inputField.setActionCommand("enter");
 		
 		JPanel buttonPanel = new JPanel(new GridLayout(0,3));
 		inputButton = new JButton("Add");
@@ -67,9 +69,9 @@ public class CustomPanel extends JPanel implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("add")) {
-		listModel.addElement(inputField.getText());
-		customList.setModel(listModel);
-		inputField.setText("");
+			listModel.addElement(inputField.getText());
+			customList.setModel(listModel);
+			inputField.setText("");
 		}
 		else if(e.getActionCommand().equals("clear")) {
 			listModel.clear();
@@ -78,6 +80,11 @@ public class CustomPanel extends JPanel implements ActionListener{
 		else if(e.getActionCommand().equals("delete")) {
 			listModel.removeElement(customList.getSelectedValue());
 			customList.setModel(listModel);
+		}
+		else if(e.getActionCommand().equals("enter")) {
+			listModel.addElement(inputField.getText());
+			customList.setModel(listModel);
+			inputField.setText("");			
 		}
 	}
 	

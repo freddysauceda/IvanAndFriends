@@ -56,8 +56,9 @@ public class CustomPanel extends JPanel implements ActionListener{
 	
 	public ArrayList<String> exportList() {
 		ArrayList<String> returnList = new ArrayList<String>();
-		for(int i=0; 1 < listModel.getSize(); i++) {
+		for(int i=0; i < listModel.getSize(); i++) {
 			returnList.add((String) listModel.get(i));
+			System.out.println((String) listModel.get(i));
 		}
 		return returnList;
 	}

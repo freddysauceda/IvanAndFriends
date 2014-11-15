@@ -20,7 +20,12 @@ import java.util.Random;
 
 public class MainGooey extends JFrame implements ActionListener {
 	private JLabel foodPlace;
-
+	private CustomPanel customPanel = new CustomPanel();
+	
+	JCheckBox offBox = new JCheckBox("Off Campus");
+    JCheckBox onBox = new JCheckBox("On Campus");
+    JCheckBox customBox = new JCheckBox("Custom");
+    
     public MainGooey() {
         
        setTitle("Food Roulette");
@@ -28,28 +33,35 @@ public class MainGooey extends JFrame implements ActionListener {
        setLocationRelativeTo(null);
        setDefaultCloseOperation(EXIT_ON_CLOSE); 
        
+       JTabbedPane tabbedPane = new JTabbedPane();
+       
        JPanel mainPanel = new JPanel(new GridLayout(2,0));
+       tabbedPane.addTab("Main", null, mainPanel,
+               "ADVENTURE AWAITS");
+       tabbedPane.addTab("Custom", null, customPanel,
+               "Mien List");
        
        foodPlace = new JLabel("Food Adventure", SwingConstants.CENTER);
        foodPlace.setFont(new Font("Sans-Serif", Font.BOLD, 25));
        mainPanel.add(foodPlace);
        
        JPanel bottomPanel = new JPanel(new GridLayout(2,0));
-       JPanel bottomRightPanel = new JPanel(new GridLayout(0,2));
+       JPanel bottomRightPanel = new JPanel(new GridLayout(0,3));
        
-       JCheckBox offBox = new JCheckBox("Off Campus");
-       JCheckBox onBox = new JCheckBox("On Campus");
+       //////////
        bottomRightPanel.add(offBox);
        bottomRightPanel.add(onBox);
+       bottomRightPanel.add(customBox);
        
        JButton randomButton = new JButton("Choose for me");
+       randomButton.setActionCommand("choose");
        randomButton.addActionListener(this);
        
        bottomPanel.add(randomButton);
        bottomPanel.add(bottomRightPanel);
        mainPanel.add(bottomPanel);
        
-       this.add(mainPanel);
+       this.add(tabbedPane);
     }
     
 
@@ -66,28 +78,43 @@ public class MainGooey extends JFrame implements ActionListener {
 
 
 	public void actionPerformed(ActionEvent e) {
-		foodPlace.setText(getRandomFood());
+		if(e.getActionCommand().equals("choose")) {
+			foodPlace.setText(getRandomFood());
+		}
 		
 	}
 	
-	private String getRandomFood() {
-		//String foodPlaces[] = {"place1", "place2", "place3", "place4", "place5"};
-		
+	private String getRandomFood() {		
+		ArrayList<String> onFoodPlaces = new ArrayList<String>();
+		ArrayList<String> offFoodPlaces = new ArrayList<String>();
+		ArrayList<String> customFoodPlaces = new ArrayList<String>();
 		ArrayList<String> foodPlaces = new ArrayList<String>();
-
+		
 		String filePath = new File("").getAbsolutePath();
-        System.out.println (filePath);
+        //System.out.println (filePath);
 
         BufferedReader reader = null;
 
 		//parse file to ArrayList
 		try {
-		    reader = new BufferedReader(new FileReader(filePath + "/resources/offcampus"));
+			//read offcampus
+		    reader = new BufferedReader(new FileReader(filePath + "/src/resources/offcampus"));
 		    String text = null;
 
 		    while ((text = reader.readLine()) != null) {
-		    	foodPlaces.add(text);
+		    	offFoodPlaces.add(text);
 		    }
+		    
+		    //read oncampus
+		    reader = new BufferedReader(new FileReader(filePath + "/src/resources/oncampus"));
+
+		    while ((text = reader.readLine()) != null) {
+		    	onFoodPlaces.add(text);
+		    }
+		    
+		    //read custom
+		    customFoodPlaces.addAll(customPanel.exportList());
+		    
 		} catch (FileNotFoundException e) {
 		    e.printStackTrace();
 		} catch (IOException e) {
@@ -100,13 +127,24 @@ public class MainGooey extends JFrame implements ActionListener {
 		    } catch (IOException e) {
 		    }
 		}
-		for(String place : foodPlaces) {
-			System.out.println(place);
-		}
 
 		//return random foodPlace from arrayList
+		if(offBox.isSelected()) {
+			foodPlaces.addAll(offFoodPlaces);
+		}
+		if(onBox.isSelected()) {
+			foodPlaces.addAll(onFoodPlaces);
+		}
+		if(customBox.isSelected()) {
+			foodPlaces.addAll(customFoodPlaces);
+		}
 		Random randomGenerator = new Random();
-		return foodPlaces.get(randomGenerator.nextInt(foodPlaces.size()));
+		if(foodPlaces.size() > 0) {
+			return foodPlaces.get(randomGenerator.nextInt(foodPlaces.size()));
+		}
+		else {
+			return "";
+		}
 		
 	}
 }

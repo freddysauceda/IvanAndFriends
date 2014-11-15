@@ -23,6 +23,7 @@ public class CustomPanel extends JPanel implements ActionListener{
 	JTextField inputField;
 	JButton inputButton;
 	JButton clearButton;
+	JButton deleteButton;
 	
 	public CustomPanel() {
 		super(new BorderLayout());
@@ -36,8 +37,10 @@ public class CustomPanel extends JPanel implements ActionListener{
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
 		/**********************************************/
-		JPanel inputPanel = new JPanel(new GridLayout(0,3));
+		JPanel inputPanel = new JPanel(new GridLayout(2,0));
 		inputField = new JTextField();
+		
+		JPanel buttonPanel = new JPanel(new GridLayout(0,3));
 		inputButton = new JButton("Add");
 		inputButton.setActionCommand("add");
 		inputButton.addActionListener(this);
@@ -46,9 +49,16 @@ public class CustomPanel extends JPanel implements ActionListener{
 		clearButton.setActionCommand("clear");
 		clearButton.addActionListener(this);
 		
+		deleteButton = new JButton("Delete");
+		deleteButton.setActionCommand("delete");
+		deleteButton.addActionListener(this);
+		
+		buttonPanel.add(inputButton);
+		buttonPanel.add(clearButton);
+		buttonPanel.add(deleteButton);
+		
 		inputPanel.add(inputField);
-		inputPanel.add(inputButton);
-		inputPanel.add(clearButton);
+		inputPanel.add(buttonPanel);
 		
 		this.add(listScroller, BorderLayout.NORTH);
 		this.add(inputPanel, BorderLayout.SOUTH);
@@ -63,6 +73,10 @@ public class CustomPanel extends JPanel implements ActionListener{
 		}
 		else if(e.getActionCommand().equals("clear")) {
 			listModel.clear();
+			customList.setModel(listModel);
+		}
+		else if(e.getActionCommand().equals("delete")) {
+			listModel.removeElement(customList.getSelectedValue());
 			customList.setModel(listModel);
 		}
 	}

@@ -11,22 +11,32 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.JFrame;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class MainGooey extends JFrame implements ActionListener {
+	private JPanel mainPanel;
+	private JPanel bottomPanel;
 	private JLabel foodPlace;
 	private CustomPanel customPanel = new CustomPanel();
+	
+	private URI uri;
 	
 	JCheckBox offBox = new JCheckBox("Off Campus");
     JCheckBox onBox = new JCheckBox("On Campus");
     JCheckBox customBox = new JCheckBox("Custom");
     
-    public MainGooey() {
+    HashMap<String, String> offFoodMap;
+    
+    public MainGooey() throws URISyntaxException {
         
        setTitle("Food Roulette");
        setSize(300, 200);
@@ -35,17 +45,18 @@ public class MainGooey extends JFrame implements ActionListener {
        
        JTabbedPane tabbedPane = new JTabbedPane();
        
-       JPanel mainPanel = new JPanel(new GridLayout(2,0));
+       mainPanel = new JPanel(new GridLayout(2,0));
        tabbedPane.addTab("Main", null, mainPanel,
                "ADVENTURE AWAITS");
        tabbedPane.addTab("Custom", null, customPanel,
                "Mien List");
        
-       foodPlace = new JLabel("Food Adventure", SwingConstants.CENTER);
+       foodPlace = new JLabel("Adventure Awaits", SwingConstants.CENTER);
+       //foodPlace = linkify("Adventure Awaits", "http://www.google.com", "google");
        foodPlace.setFont(new Font("Sans-Serif", Font.BOLD, 25));
        mainPanel.add(foodPlace);
        
-       JPanel bottomPanel = new JPanel(new GridLayout(2,0));
+       bottomPanel = new JPanel(new GridLayout(2,0));
        JPanel bottomRightPanel = new JPanel(new GridLayout(0,3));
        
        //////////
@@ -70,7 +81,13 @@ public class MainGooey extends JFrame implements ActionListener {
         EventQueue.invokeLater(new Runnable() {
             
             public void run() {
-            	MainGooey ex = new MainGooey();
+            	MainGooey ex = null;
+				try {
+					ex = new MainGooey();
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 ex.setVisible(true);
             }
         });
@@ -79,7 +96,24 @@ public class MainGooey extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("choose")) {
-			foodPlace.setText(getRandomFood());
+			String place = getRandomFood();
+
+			mainPanel.remove(foodPlace);
+			mainPanel.remove(bottomPanel);
+			
+			if(offFoodMap.get(place) == null) {
+				foodPlace = new JLabel(place);
+			}
+			else {
+				foodPlace = linkify(place, offFoodMap.get(place), place);
+			}
+			
+			foodPlace.setFont(new Font("Sans-Serif", Font.BOLD, 25));
+			mainPanel.add(foodPlace);
+			mainPanel.add(bottomPanel);
+			
+			mainPanel.revalidate();
+			mainPanel.repaint(); 
 		}
 		
 	}
@@ -89,6 +123,8 @@ public class MainGooey extends JFrame implements ActionListener {
 		ArrayList<String> offFoodPlaces = new ArrayList<String>();
 		ArrayList<String> customFoodPlaces = new ArrayList<String>();
 		ArrayList<String> foodPlaces = new ArrayList<String>();
+		
+		offFoodMap = new HashMap<String, String>();
 		
 		String filePath = new File("").getAbsolutePath();
         //System.out.println (filePath);
@@ -103,6 +139,7 @@ public class MainGooey extends JFrame implements ActionListener {
 
 		    while ((text = reader.readLine()) != null) {
 		    	offFoodPlaces.add(text);
+		    	offFoodMap.put(text, reader.readLine());
 		    }
 		    
 		    //read oncampus
@@ -146,5 +183,66 @@ public class MainGooey extends JFrame implements ActionListener {
 			return "";
 		}
 		
+	}
+	
+	public static JLabel linkify(final String text, String URL, String toolTip)
+	{
+	    URI temp = null;
+	    try
+	    {
+	        temp = new URI(URL);
+	    }
+	    catch (Exception e)
+	    {
+	        e.printStackTrace();
+	    }
+	    final URI uri = temp;
+	    final JLabel link = new JLabel();
+	    link.setText("<HTML><FONT color=\"#000099\">"+text+"</FONT></HTML>");
+	    if(!toolTip.equals(""))
+	        link.setToolTipText(toolTip);
+	    link.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	    link.addMouseListener(new MouseListener()
+	    {
+	        public void mouseExited(MouseEvent arg0)
+	        {
+	            link.setText("<HTML><FONT color=\"#000099\">"+text+"</FONT></HTML>");
+	        }
+
+	        public void mouseEntered(MouseEvent arg0)
+	        {
+	            link.setText("<HTML><FONT color=\"#000099\"><U>"+text+"</U></FONT></HTML>");
+	        }
+
+	        public void mouseClicked(MouseEvent arg0)
+	        {
+	            if (Desktop.isDesktopSupported())
+	            {
+	                try
+	                {
+	                    Desktop.getDesktop().browse(uri);
+	                }
+	                catch (Exception e)
+	                {
+	                    e.printStackTrace();
+	                }
+	            }
+	            else
+	            {
+	                JOptionPane pane = new JOptionPane("Could not open link.");
+	                JDialog dialog = pane.createDialog(new JFrame(), "");
+	                dialog.setVisible(true);
+	            }
+	        }
+
+	        public void mousePressed(MouseEvent e)
+	        {
+	        }
+
+	        public void mouseReleased(MouseEvent e)
+	        {
+	        }
+	    });
+	    return link;
 	}
 }

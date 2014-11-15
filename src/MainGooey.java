@@ -28,14 +28,26 @@ public class MainGooey extends JFrame implements ActionListener {
        setLocationRelativeTo(null);
        setDefaultCloseOperation(EXIT_ON_CLOSE); 
        
-       JPanel mainPanel = new JPanel(new BorderLayout());
+       JPanel mainPanel = new JPanel(new GridLayout(2,0));
        
-       foodPlace = new JLabel("something");
-       mainPanel.add(foodPlace, BorderLayout.NORTH);
+       foodPlace = new JLabel("Food Adventure", SwingConstants.CENTER);
+       foodPlace.setFont(new Font("Sans-Serif", Font.BOLD, 25));
+       mainPanel.add(foodPlace);
+       
+       JPanel bottomPanel = new JPanel(new GridLayout(2,0));
+       JPanel bottomRightPanel = new JPanel(new GridLayout(0,2));
+       
+       JCheckBox offBox = new JCheckBox("Off Campus");
+       JCheckBox onBox = new JCheckBox("On Campus");
+       bottomRightPanel.add(offBox);
+       bottomRightPanel.add(onBox);
        
        JButton randomButton = new JButton("Choose for me");
        randomButton.addActionListener(this);
-       mainPanel.add(randomButton, BorderLayout.SOUTH);
+       
+       bottomPanel.add(randomButton);
+       bottomPanel.add(bottomRightPanel);
+       mainPanel.add(bottomPanel);
        
        this.add(mainPanel);
     }
@@ -87,6 +99,9 @@ public class MainGooey extends JFrame implements ActionListener {
 		        }
 		    } catch (IOException e) {
 		    }
+		}
+		for(String place : foodPlaces) {
+			System.out.println(place);
 		}
 
 		//return random foodPlace from arrayList
